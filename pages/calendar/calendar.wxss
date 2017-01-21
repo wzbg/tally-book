@@ -12,6 +12,18 @@
   height: 83rpx;
 }
 
+.calendar-navbar-solar-date {
+  flex-grow: 1;
+  width: 200rpx;
+  font-size: 40rpx;
+}
+
+.calendar-navbar-lunar-date {
+  flex-grow: 1;
+  width: 200rpx;
+  font-size: 25rpx;
+}
+
 .calendar-navbar-button {
   flex-grow: 1;
   width: 100rpx;

@@ -1,12 +1,11 @@
 <view class="calendar-root">
   <view class="calendar-navbar">
-    <view>{{sDate}}</view>
-    <view>{{lDate}}</view>
-  </view>
-  <view class="calendar-navbar">
     <view class="calendar-navbar-button" bindtap="goToday">今日</view>
     <view class="calendar-navbar-button" bindtap="goLastMonth">{{"⬅️"}}</view>
-    <view class="calendar-navbar-date">{{date}}</view>
+    <view>
+      <view class="calendar-navbar-solar-date">{{sDate}}</view>
+      <view class="calendar-navbar-lunar-date">{{lDate}}</view>
+    </view>
     <view class="calendar-navbar-button" bindtap="goNextMonth">{{"➡️"}}</view>
     <picker class="calendar-navbar-button" mode="date" start="1900-01-01" end="2100-01-01" bindchange="bindDateChange">
       <view>跳转</view>

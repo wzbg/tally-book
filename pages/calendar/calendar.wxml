@@ -17,12 +17,12 @@
   <view class="calendar-body">
     <view class="calendar-body-rows" wx:for="123456" wx:for-index="row" wx:key="*this">
       <view class="calendar-body-cols" wx:for="1234567" wx:for-index="col" wx:key="*this">
-        <view class="calendar-body-item" wx:if="{{arrIsShow[row * 7 + col]}}" data-day-index="{{row * 7 + col}}" bindtap="selectDay">
+        <view class="calendar-body-item" data-day-index="{{row * 7 + col}}" bindtap="selectDay">
           <view class="calendar-body-day">
-            {{arrDays[row * 7 + col]}}
+            {{days[row * 7 + col].sDay}}
           </view>
           <view class="calendar-body-dayex">
-            {{arrInfoExShow[row * 7 + col]}}
+            {{days[row * 7 + col].lunarDay}}
           </view>
         </view>
       </view>

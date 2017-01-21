@@ -101,10 +101,11 @@ Page({
             const sDay = startDate.getDate() // 当天
             const result = calendarConverter.solar2lunar(startDate) // 公历转农历
             if (sDay === day) { // 选中日期
+                if (result.sMonth < 10) result.sMonth = '0' + result.sMonth
                 sDate = `${result.sYear}.${result.sMonth}.${result.sDay}` // 公历日期
                 lDate = `${result.cYear}${result.lunarYear}年${result.lunarMonth}月${result.lunarDay}` // 农历日期
             }
-            startDate.setDate(sDay + 1) // 下一天
+            if (result.lDay === 1) result.lunarDay = (result.isLeap ? '闰' : '') + result.lunarMonth + '月' // 月初
             days.push({
                 sDay: result.sDay, // 公历天
                 lunarDay: result.lunarDay, // 农历天
@@ -112,6 +113,7 @@ Page({
                 solarFestival: result.solarFestival, // 公历节日
                 lunarFestival: result.lunarFestival, // 农历节日
             })
+            startDate.setDate(sDay + 1) // 下一天
         }
         console.log(days)
         this.setData({ sDate, lDate, days })

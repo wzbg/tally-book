@@ -81,14 +81,17 @@ Page({
     onLoad: function () { // 生命周期函数--监听页面加载
         this.goDate()
         this.goToday()
+        this.setData({
+            weeks: ['日', '一', '二', '三', '四', '五', '六'] // 星期表头
+        })
     },
 
     goDate: function (date) {
         const result = calendarConverter.solar2lunar(date || new Date())
         if (result.sMonth < 10) result.sMonth = '0' + result.sMonth
         this.setData({
-            sDate: `${result.sYear}.${result.sMonth}.${result.sDay}`,
-            lDate: `${result.cYear}${result.lunarYear}年${result.lunarMonth}月${result.lunarDay}`
+            sDate: `${result.sYear}.${result.sMonth}.${result.sDay}`, // 公历日期
+            lDate: `${result.cYear}${result.lunarYear}年${result.lunarMonth}月${result.lunarDay}` // 农历日期
         })
     },
 

@@ -12,7 +12,7 @@
     </picker>
   </view>
   <view class="calendar-head">
-    <view wx:for="一二三四五六日" wx:key="*this">{{item}}</view>
+    <view wx:for="{{weeks}}" wx:key="*this">{{item}}</view>
   </view>
   <view class="calendar-body">
     <view class="calendar-body-rows" wx:for="123456" wx:for-index="row" wx:key="*this">

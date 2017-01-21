@@ -4,7 +4,8 @@ const calendarConverter = new CalendarConverter()
 // 月份天数表
 const DAY_OF_MONTH = [
     [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-    [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]]
+    [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+]
 
 // 判断当前年是否闰年
 const isLeapYear = year => {
@@ -51,9 +52,9 @@ const setCurDetailIndex = index => {
 const refreshPageData = (year, month, day) => {
     pageData.date = year + '年' + (month + 1) + '月'
 
-    let offset = new Date(year, month, 1).getDay()
+    const offset = new Date(year, month).getDay()
 
-    for (let i = 0; i < 32; ++i) {
+    for (let i = 0; i < 42; ++i) {
         pageData.arrIsShow[i] = i < offset || i >= getDayCount(year, month) + offset ? false : true
         pageData.arrDays[i] = i - offset + 1
         const d = new Date(year, month, i - offset + 1)
@@ -87,12 +88,33 @@ Page({
     },
 
     goDate: function (date) {
-        const result = calendarConverter.solar2lunar(date || new Date())
-        if (result.sMonth < 10) result.sMonth = '0' + result.sMonth
-        this.setData({
-            sDate: `${result.sYear}.${result.sMonth}.${result.sDay}`, // 公历日期
-            lDate: `${result.cYear}${result.lunarYear}年${result.lunarMonth}月${result.lunarDay}` // 农历日期
-        })
+        date = date || new Date() // 日期
+        const year = date.getFullYear(), // 年
+            month = date.getMonth(), // 月
+            day = date.getDate() // 日
+        const offset = new Date(year, month).getDay() // 月初星期偏移
+        const startDate = new Date(year, month, 1 - offset) // 开始日期
+        const days = [] // 日历表数组
+        let sDate, // 公历日期
+            lDate // 农历日期
+        for (let i = 0; i < 42; i++) {
+            const sDay = startDate.getDate() // 当天
+            const result = calendarConverter.solar2lunar(startDate) // 公历转农历
+            if (sDay === day) { // 选中日期
+                sDate = `${result.sYear}.${result.sMonth}.${result.sDay}` // 公历日期
+                lDate = `${result.cYear}${result.lunarYear}年${result.lunarMonth}月${result.lunarDay}` // 农历日期
+            }
+            startDate.setDate(sDay + 1) // 下一天
+            days.push({
+                sDay: result.sDay, // 公历天
+                lunarDay: result.lunarDay, // 农历天
+                solarTerms: result.solarTerms, // 节气
+                solarFestival: result.solarFestival, // 公历节日
+                lunarFestival: result.lunarFestival, // 农历节日
+            })
+        }
+        console.log(days)
+        this.setData({ sDate, lDate, days })
     },
 
     goToday: function (e) {

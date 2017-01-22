@@ -28,9 +28,4 @@
       </view>
     </view>
   </view>
-  <view class="calendar-detail">
-    <view class="calendar-detail-day">{{detailData.curDay}}</view>
-    <view class="calendar-detail-info1">{{detailData.curInfo1}}</view>
-    <view class="calendar-detail-info2">{{detailData.curInfo2}}</view>
-  </view>
 </view>

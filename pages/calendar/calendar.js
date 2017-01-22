@@ -115,7 +115,6 @@ Page({
             })
             startDate.setDate(sDay + 1) // 下一天
         }
-        console.log(days)
         this.setData({ sDate, lDate, days })
     },
 

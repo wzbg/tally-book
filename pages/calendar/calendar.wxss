@@ -42,15 +42,14 @@
 
 .calendar-head {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80rpx;
   background: #fff;
   font-size: 35rpx;
 }
 
 .calendar-head view {
   text-align: center;
+  border: 1rpx solid;
+  padding: 10rpx 0;
   flex: 1;
 }
 
@@ -62,7 +61,6 @@
   display: flex;
   align-items: center;
   height: 175rpx;
-  padding: 0 4rpx 8rpx;
 }
 
 .calendar-body-cols {
@@ -70,7 +68,7 @@
   flex: 1;
   align-items: center;
   height: 100%;
-  padding: 0 4rpx;
+  border: 1rpx solid;
 }
 
 .calendar-body-item {
@@ -80,11 +78,20 @@
   height: 100%;
 }
 
-.calendar-body-day {
-  text-align: center;
+.calendar-body-selected {
+  background: #eee;
 }
 
-.calendar-body-dayex {
+.calendar-body-today {
+  background: #e64340;
+}
+
+.calendar-body-sDay {
+  text-align: center;
+  padding-top: 10rpx;
+}
+
+.calendar-body-lunarDay {
   text-align: center;
   font-size: 25rpx;
 }

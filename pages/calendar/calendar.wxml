@@ -12,17 +12,17 @@
     </picker>
   </view>
   <view class="calendar-head">
-    <view wx:for="{{weeks}}" wx:key="*this">{{item}}</view>
+    <view wx:for="{{weeks}}" wx:key="*this">周{{item}}</view>
   </view>
   <view class="calendar-body">
     <view class="calendar-body-rows" wx:for="123456" wx:for-index="row" wx:key="*this">
       <view class="calendar-body-cols" wx:for="1234567" wx:for-index="col" wx:key="*this">
-        <view class="calendar-body-item" data-day-index="{{row * 7 + col}}" bindtap="selectDay">
-          <view class="calendar-body-day">
-            {{days[row * 7 + col].sDay}}
+        <view class="calendar-body-item {{days[row*7+col].isSelected?'calendar-body-selected':''}} {{days[row*7+col].isToday?'calendar-body-today':''}}" data-day="{{days[row*7+col].sDay}}" data-month="{{days[row*7+col].sMonth-1}}" data-year="{{days[row*7+col].sYear}}" bindtap="selectDay">
+          <view class="calendar-body-sDay">
+            {{days[row*7+col].sDay}}
           </view>
-          <view class="calendar-body-dayex">
-            {{days[row * 7 + col].lunarDay}}
+          <view class="calendar-body-lunarDay">
+            {{days[row*7+col].lunarDay}}
           </view>
         </view>
       </view>

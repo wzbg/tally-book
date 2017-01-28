@@ -81,14 +81,15 @@ Page({
 
     onLoad: function () { // 生命周期函数--监听页面加载
         this.goDate()
-        this.goToday()
         this.setData({
             weeks: ['日', '一', '二', '三', '四', '五', '六'] // 星期表头
         })
     },
 
     goDate: function (date) {
-        date = date || new Date() // 日期
+        const today = new Date() // 今天
+        today.setHours(0, 0, 0, 0) // 清空时分秒
+        date = date || today // 日期
         const year = date.getFullYear(), // 年
             month = date.getMonth(), // 月
             day = date.getDate() // 日
@@ -98,22 +99,28 @@ Page({
         let sDate, // 公历日期
             lDate // 农历日期
         for (let i = 0; i < 42; i++) {
-            const sDay = startDate.getDate() // 当天
+            const isSelected = date.getTime() === startDate.getTime() // 已选中
             const result = calendarConverter.solar2lunar(startDate) // 公历转农历
-            if (sDay === day) { // 选中日期
+            if (isSelected) { // 已选中该日期
                 if (result.sMonth < 10) result.sMonth = '0' + result.sMonth
                 sDate = `${result.sYear}.${result.sMonth}.${result.sDay}` // 公历日期
                 lDate = `${result.cYear}${result.lunarYear}年${result.lunarMonth}月${result.lunarDay}` // 农历日期
             }
-            if (result.lDay === 1) result.lunarDay = (result.isLeap ? '闰' : '') + result.lunarMonth + '月' // 月初
+            if (result.lDay === 1) { // 月初
+                result.lunarDay = (result.isLeap ? '闰' : '') + result.lunarMonth + '月'
+            }
             days.push({
                 sDay: result.sDay, // 公历天
+                sMonth: result.sMonth, // 公历月
+                sYear: result.sYear, // 公历年
                 lunarDay: result.lunarDay, // 农历天
                 solarTerms: result.solarTerms, // 节气
                 solarFestival: result.solarFestival, // 公历节日
                 lunarFestival: result.lunarFestival, // 农历节日
+                isSelected: isSelected, // 已选中该日期
+                isToday: today.getTime() === startDate.getTime() // 今天
             })
-            startDate.setDate(sDay + 1) // 下一天
+            startDate.setDate(result.sDay + 1) // 下一天
         }
         this.setData({ sDate, lDate, days })
     },
@@ -151,11 +158,9 @@ Page({
         this.setData(pageData)
     },
 
-    selectDay: function (e) {
-        setCurDetailIndex(e.currentTarget.dataset.dayIndex)
-        this.setData({
-            detailData: pageData.detailData
-        })
+    selectDay: function (event) {
+        const dataset = event.currentTarget.dataset
+        this.goDate(new Date(dataset.year, dataset.month, dataset.day))
     },
 
     bindDateChange: function (e) {

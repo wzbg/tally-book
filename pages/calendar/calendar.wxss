@@ -78,6 +78,10 @@
   height: 100%;
 }
 
+.calendar-body-notMonth {
+  opacity: 0.2;
+}
+
 .calendar-body-selected {
   background: #eee;
 }

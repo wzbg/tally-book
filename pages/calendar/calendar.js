@@ -110,14 +110,15 @@ Page({
                 result.lunarDay = (result.isLeap ? '闰' : '') + result.lunarMonth + '月'
             }
             days.push({
-                sDay: result.sDay, // 公历天
-                sMonth: result.sMonth, // 公历月
-                sYear: result.sYear, // 公历年
+                sDay: startDate.getDate(), // 公历天
+                sMonth: startDate.getMonth(), // 公历月
+                sYear: startDate.getFullYear(), // 公历年
                 lunarDay: result.lunarDay, // 农历天
                 solarTerms: result.solarTerms, // 节气
                 solarFestival: result.solarFestival, // 公历节日
                 lunarFestival: result.lunarFestival, // 农历节日
                 isSelected: isSelected, // 已选中该日期
+                isMonth: month === startDate.getMonth(), // 当月
                 isToday: today.getTime() === startDate.getTime() // 今天
             })
             startDate.setDate(result.sDay + 1) // 下一天

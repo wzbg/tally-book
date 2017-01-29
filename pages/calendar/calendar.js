@@ -1,95 +1,34 @@
 const CalendarConverter = require('../../utils/calendar-converter')
 const calendarConverter = new CalendarConverter()
 
-// 月份天数表
-const DAY_OF_MONTH = [
-    [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-    [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-]
-
-// 判断当前年是否闰年
-const isLeapYear = year => {
-    return (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) ? 1 : 0
-}
-
-// 获取当月有多少天
-const getDayCount = (year, month) => {
-    return DAY_OF_MONTH[isLeapYear(year)][month]
-}
-
-// 获取当前索引下是几号
-const getDay = index => {
-    return index - curDayOffset
-}
-
-const pageData = {
-    date: '',          // 当前日期字符串
-
-    // arr数据是与索引对应的数据信息
-    arrIsShow: [],     // 是否显示此日期
-    arrDays: [],       // 关于几号的信息
-    arrInfoEx: [],     // 农历节假日等扩展信息
-    arrInfoExShow: [], // 处理后用于显示的扩展信息
-
-    // 选择一天时显示的信息
-    detailData: {
-        curDay: '',    // detail中显示的日信息
-        curInfo1: '',
-        curInfo2: '',
-    }
-}
-
-// 设置当前详细信息的索引，前台的详细信息会被更新
-const setCurDetailIndex = index => {
-    const curEx = pageData.arrInfoEx[index]
-    curDay = curEx.sDay - 1
-    pageData.detailData.curDay = curEx.sDay
-    pageData.detailData.curInfo1 = '农历' + curEx.lunarMonth + '月' + curEx.lunarDay
-    pageData.detailData.curInfo2 = curEx.cYear + curEx.lunarYear + '年 ' + curEx.cMonth + '月 ' + curEx.cDay + '日 ' + curEx.lunarFestival
-}
-
-// 刷新全部数据
-const refreshPageData = (year, month, day) => {
-    pageData.date = year + '年' + (month + 1) + '月'
-
-    const offset = new Date(year, month).getDay()
-
-    for (let i = 0; i < 42; ++i) {
-        pageData.arrIsShow[i] = i < offset || i >= getDayCount(year, month) + offset ? false : true
-        pageData.arrDays[i] = i - offset + 1
-        const d = new Date(year, month, i - offset + 1)
-        const dEx = calendarConverter.solar2lunar(d)
-        pageData.arrInfoEx[i] = dEx
-        if ('' != dEx.lunarFestival) {
-            pageData.arrInfoExShow[i] = dEx.lunarFestival
-        }
-        else if ('初一' === dEx.lunarDay) {
-            pageData.arrInfoExShow[i] = dEx.lunarMonth + '月'
-        }
-        else {
-            pageData.arrInfoExShow[i] = dEx.lunarDay
-        }
-    }
-
-    setCurDetailIndex(day - 1)
-}
-
-let curDate, curMonth, curYear, curDay
-
 Page({
-    data: pageData,
+    data: { // 页面的初始数据
+        minDate: '1901-01-01', // 最小日期
+        maxDate: '2050-12-31' // 最大日期
+    },
 
     onLoad: function () { // 生命周期函数--监听页面加载
-        this.goDate()
+        this.goDate() // 默认今天
         this.setData({
             weeks: ['日', '一', '二', '三', '四', '五', '六'] // 星期表头
         })
     },
 
-    goDate: function (date) {
+    goDate: function (date) { // 到指定天
         const today = new Date() // 今天
         today.setHours(0, 0, 0, 0) // 清空时分秒
-        date = date || today // 日期
+        if (date) {
+            const minDate = new Date(this.data.minDate),
+                maxDate = new Date(this.data.maxDate)
+            if (date < minDate) {
+                date = minDate
+            } else if (date > maxDate) {
+                date = maxDate
+            }
+        } else {
+            date = today // 默认今天
+        }
+        date.setHours(0, 0, 0, 0) // 清空时分秒
         const year = date.getFullYear(), // 年
             month = date.getMonth(), // 月
             day = date.getDate() // 日
@@ -98,16 +37,17 @@ Page({
         const days = [] // 日历表数组
         let sDate, // 公历日期
             lDate // 农历日期
-        for (let i = 0; i < 42; i++) {
+        for (let i = 0; i < 42; i++) { // 日历最大 6行 * 7天 = 42天
             const isSelected = date.getTime() === startDate.getTime() // 已选中
             const result = calendarConverter.solar2lunar(startDate) // 公历转农历
             if (isSelected) { // 已选中该日期
-                if (result.sMonth < 10) result.sMonth = '0' + result.sMonth
+                if (result.sMonth < 10) result.sMonth = '0' + result.sMonth // 格式化月份
+                if (result.sDay < 10) result.sDay = '0' + result.sDay // 格式化日期
                 sDate = `${result.sYear}.${result.sMonth}.${result.sDay}` // 公历日期
                 lDate = `${result.cYear}${result.lunarYear}年${result.lunarMonth}月${result.lunarDay}` // 农历日期
             }
             if (result.lDay === 1) { // 月初
-                result.lunarDay = (result.isLeap ? '闰' : '') + result.lunarMonth + '月'
+                result.lunarDay = (result.isLeap ? '闰' : '') + result.lunarMonth + '月' // 闰月处理
             }
             days.push({
                 sDay: startDate.getDate(), // 公历天
@@ -121,78 +61,58 @@ Page({
                 isMonth: month === startDate.getMonth(), // 当月
                 isToday: today.getTime() === startDate.getTime() // 今天
             })
-            startDate.setDate(result.sDay + 1) // 下一天
+            startDate.setDate(startDate.getDate() + 1) // 下一天
         }
-        this.setData({ year, month, day, sDate, lDate, days })
+        this.setData({
+            year,
+            month,
+            day,
+            date: sDate.replace(/\./g, '-'),
+            sDate,
+            lDate,
+            days
+        })
     },
 
-    selectDay: function (event) {
+    goToday: function (event) { // 回到今天
+        this.goDate()
+    },
+
+    dateChange: function (event) { // 日期选择器
+        const date = event.detail.value.split('-')
+        this.goDate(new Date(date[0], date[1] - 1, date[2]))
+    },
+
+    selectDay: function (event) { // 点击选择日期
         const dataset = event.currentTarget.dataset
         this.goDate(new Date(dataset.year, dataset.month, dataset.day))
     },
 
-    touchstart: function (event) {
+    touchstart: function (event) { // 触摸开始
         const touch = event.changedTouches[0]
-        this.page = {
+        this.page = { // 记录触摸开始点坐标
             x: touch.pageX,
             y: touch.pageY
         }
     },
 
-    touchend: function (event) {
+    touchend: function (event) { // 触摸结束
         const touch = event.changedTouches[0]
+        // 计算滑动差值
         const diffX = touch.pageX - this.page.x
         const diffY = touch.pageY - this.page.y
         if (!diffX && !diffY) return
+        // 判断滑动方向
         const direc = Math.abs(diffX) > Math.abs(diffY) ? diffX > 0 ? 'right' : 'left' : diffY > 0 ? 'bottom' : 'top'
-        let diffM = 0
+        let diffM = 0 // 月份位移
         switch (direc) {
-            case 'right':
+            case 'left':
                 diffM++
                 break
-            case 'left':
+            case 'right':
                 diffM--
                 break
         }
         this.goDate(new Date(this.data.year, this.data.month + diffM, this.data.day))
-    },
-
-    goToday: function (e) {
-        curDate = new Date()
-        curMonth = curDate.getMonth()
-        curYear = curDate.getFullYear()
-        curDay = curDate.getDate()
-        refreshPageData(curYear, curMonth, curDay)
-        this.setData(pageData)
-    },
-
-    goLastMonth: function (e) {
-        if (0 == curMonth) {
-            curMonth = 11
-            --curYear
-        }
-        else {
-            --curMonth
-        }
-        refreshPageData(curYear, curMonth, 0)
-        this.setData(pageData)
-    },
-
-    goNextMonth: function (e) {
-        if (11 == curMonth) {
-            curMonth = 0
-            ++curYear
-        }
-        else {
-            ++curMonth
-        }
-        refreshPageData(curYear, curMonth, 0)
-        this.setData(pageData)
-    },
-
-    bindDateChange: function (e) {
-        const arr = e.detail.value.split('-')
-        refreshPageData(arr[0], arr[1] - 1, arr[2])
-        this.setData(pageData)
     }
 })

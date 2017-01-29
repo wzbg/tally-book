@@ -123,7 +123,38 @@ Page({
             })
             startDate.setDate(result.sDay + 1) // 下一天
         }
-        this.setData({ sDate, lDate, days })
+        this.setData({ year, month, day, sDate, lDate, days })
+    },
+
+    selectDay: function (event) {
+        const dataset = event.currentTarget.dataset
+        this.goDate(new Date(dataset.year, dataset.month, dataset.day))
+    },
+
+    touchstart: function (event) {
+        const touch = event.changedTouches[0]
+        this.page = {
+            x: touch.pageX,
+            y: touch.pageY
+        }
+    },
+
+    touchend: function (event) {
+        const touch = event.changedTouches[0]
+        const diffX = touch.pageX - this.page.x
+        const diffY = touch.pageY - this.page.y
+        if (!diffX && !diffY) return
+        const direc = Math.abs(diffX) > Math.abs(diffY) ? diffX > 0 ? 'right' : 'left' : diffY > 0 ? 'bottom' : 'top'
+        let diffM = 0
+        switch (direc) {
+            case 'right':
+                diffM++
+                break
+            case 'left':
+                diffM--
+                break
+        }
+        this.goDate(new Date(this.data.year, this.data.month + diffM, this.data.day))
     },
 
     goToday: function (e) {
@@ -157,11 +188,6 @@ Page({
         }
         refreshPageData(curYear, curMonth, 0)
         this.setData(pageData)
-    },
-
-    selectDay: function (event) {
-        const dataset = event.currentTarget.dataset
-        this.goDate(new Date(dataset.year, dataset.month, dataset.day))
     },
 
     bindDateChange: function (e) {

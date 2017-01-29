@@ -4,14 +4,12 @@ const calendarConverter = new CalendarConverter()
 Page({
     data: { // 页面的初始数据
         minDate: '1901-01-01', // 最小日期
-        maxDate: '2050-12-31' // 最大日期
+        maxDate: '2050-12-31', // 最大日期
+        weeks: ['日', '一', '二', '三', '四', '五', '六'] // 星期表头
     },
 
     onLoad: function () { // 生命周期函数--监听页面加载
         this.goDate() // 默认今天
-        this.setData({
-            weeks: ['日', '一', '二', '三', '四', '五', '六'] // 星期表头
-        })
     },
 
     goDate: function (date) { // 到指定天
@@ -31,15 +29,18 @@ Page({
         date.setHours(0, 0, 0, 0) // 清空时分秒
         const year = date.getFullYear(), // 年
             month = date.getMonth(), // 月
-            day = date.getDate() // 日
-        const offset = new Date(year, month).getDay() // 月初星期偏移
-        const startDate = new Date(year, month, 1 - offset) // 开始日期
-        const days = [] // 日历表数组
+            day = date.getDate(), // 日
+            offset = new Date(year, month).getDay(), // 月初星期偏移
+            startDate = new Date(year, month, 1 - offset), // 开始日期
+            endDate = new Date(year, month + 1, 0), // 结束日期
+            length = this.data.weeks.length, // 一星期天数
+            rows = Math.ceil((offset + endDate.getDate()) / length), // 日历行数
+            days = [] // 日历表数组
         let sDate, // 公历日期
             lDate // 农历日期
-        for (let i = 0; i < 42; i++) { // 日历最大 6行 * 7天 = 42天
-            const isSelected = date.getTime() === startDate.getTime() // 已选中
-            const result = calendarConverter.solar2lunar(startDate) // 公历转农历
+        for (let i = 0; i < rows * length; i++) { // 日历最大 6行 * 7天 = 42天
+            const isSelected = date.getTime() === startDate.getTime(), // 已选中
+                result = calendarConverter.solar2lunar(startDate) // 公历转农历
             if (isSelected) { // 已选中该日期
                 if (result.sMonth < 10) result.sMonth = '0' + result.sMonth // 格式化月份
                 if (result.sDay < 10) result.sDay = '0' + result.sDay // 格式化日期
@@ -64,13 +65,14 @@ Page({
             startDate.setDate(startDate.getDate() + 1) // 下一天
         }
         this.setData({
-            year,
-            month,
-            day,
-            date: sDate.replace(/\./g, '-'),
-            sDate,
-            lDate,
-            days
+            year, // 年
+            month, // 月
+            day, // 日
+            date: sDate.replace(/\./g, '-'), // 选择器日期
+            sDate, // 公历日期
+            lDate, // 农历日期
+            days, // 日历表数组
+            rows // 日历行数
         })
     },
 
@@ -99,8 +101,8 @@ Page({
     touchend: function (event) { // 触摸结束
         const touch = event.changedTouches[0]
         // 计算滑动差值
-        const diffX = touch.pageX - this.page.x
-        const diffY = touch.pageY - this.page.y
+        const diffX = touch.pageX - this.page.x,
+            diffY = touch.pageY - this.page.y
         if (!diffX && !diffY) return
         // 判断滑动方向
         const direc = Math.abs(diffX) > Math.abs(diffY) ? diffX > 0 ? 'right' : 'left' : diffY > 0 ? 'bottom' : 'top'

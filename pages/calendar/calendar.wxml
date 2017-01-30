@@ -13,8 +13,7 @@
   <view class="calendar-body">
     <view class="calendar-body-rows" wx:for="{{rows}}" wx:for-index="row" wx:key="*this">
       <view class="calendar-body-cols" wx:for="{{weeks.length}}" wx:for-index="col" wx:key="*this">
-        <view class="calendar-body-item {{days[row*7+col].isMonth?'':'calendar-body-notMonth'}} {{days[row*7+col].isSelected?'calendar-body-selected':''}} {{days[row*7+col].isToday?'calendar-body-today':''}}" data-day="{{days[row*7+col].sDay}}" data-month="{{days[row*7+col].sMonth}}"
-        data-year="{{days[row*7+col].sYear}}" bindtap="selectDay">
+        <view class="calendar-body-item {{days[row*7+col].isMonth?'':'calendar-body-notMonth'}} {{days[row*7+col].isRange?'calendar-body-range':''}} {{days[row*7+col].isToday?'calendar-body-today':''}} {{days[row*7+col].isSelected?'calendar-body-selected':''}}" data-day="{{days[row*7+col].sDay}}" data-month="{{days[row*7+col].sMonth}}" data-year="{{days[row*7+col].sYear}}" bindtap="selectDay" bindlongtap="selectDays">
           <view class="calendar-body-sDay">
             {{days[row*7+col].sDay}}
           </view>

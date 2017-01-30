@@ -3,8 +3,9 @@ const calendarConverter = new CalendarConverter()
 
 Page({
     data: { // 页面的初始数据
+        range: [], // 选择的日期范围
         minDate: '1901-01-01', // 最小日期
-        maxDate: '2050-12-31', // 最大日期
+        maxDate: '2049-12-31', // 最大日期
         weeks: ['日', '一', '二', '三', '四', '五', '六'] // 星期表头
     },
 
@@ -15,7 +16,7 @@ Page({
     goDate: function (date) { // 到指定天
         const today = new Date() // 今天
         today.setHours(0, 0, 0, 0) // 清空时分秒
-        if (date) {
+        if (date) { // 判断传入的日期范围是否合法
             const minDate = new Date(this.data.minDate),
                 maxDate = new Date(this.data.maxDate)
             if (date < minDate) {
@@ -23,8 +24,8 @@ Page({
             } else if (date > maxDate) {
                 date = maxDate
             }
-        } else {
-            date = today // 默认今天
+        } else { // 默认今天
+            date = today
         }
         date.setHours(0, 0, 0, 0) // 清空时分秒
         const year = date.getFullYear(), // 年
@@ -35,11 +36,23 @@ Page({
             endDate = new Date(year, month + 1, 0), // 结束日期
             length = this.data.weeks.length, // 一星期天数
             rows = Math.ceil((offset + endDate.getDate()) / length), // 日历行数
+            range = this.data.range, // 选择的日期范围
             days = [] // 日历表数组
         let sDate, // 公历日期
-            lDate // 农历日期
+            lDate, // 农历日期
+            ranges = [] // 开始结束范围
+        if (range[0]) { // 初始化开始范围
+            ranges[0] = range[0].getTime()
+            if (range[1]) { // 初始化结束范围
+                ranges[1] = range[1].getTime()
+            } else {
+                ranges[1] = ranges[0]
+            }
+        }
+        ranges.sort()
         for (let i = 0; i < rows * length; i++) { // 日历最大 6行 * 7天 = 42天
-            const isSelected = date.getTime() === startDate.getTime(), // 已选中
+            const time = startDate.getTime(), // 毫秒数
+                isSelected = date.getTime() === time, // 已选中
                 result = calendarConverter.solar2lunar(startDate) // 公历转农历
             if (isSelected) { // 已选中该日期
                 if (result.sMonth < 10) result.sMonth = '0' + result.sMonth // 格式化月份
@@ -58,9 +71,10 @@ Page({
                 solarTerms: result.solarTerms, // 节气
                 solarFestival: result.solarFestival, // 公历节日
                 lunarFestival: result.lunarFestival, // 农历节日
-                isSelected: isSelected, // 已选中该日期
                 isMonth: month === startDate.getMonth(), // 当月
-                isToday: today.getTime() === startDate.getTime() // 今天
+                isRange: ranges[0] <= time && time <= ranges[1], // 选中范围
+                isToday: today.getTime() === time, // 今天
+                isSelected: isSelected // 已选中该日期
             })
             startDate.setDate(startDate.getDate() + 1) // 下一天
         }
@@ -88,6 +102,15 @@ Page({
     selectDay: function (event) { // 点击选择日期
         const dataset = event.currentTarget.dataset
         this.goDate(new Date(dataset.year, dataset.month, dataset.day))
+    },
+
+    selectDays: function (event) { // 长按选择日期
+        const dataset = event.currentTarget.dataset,
+            date = new Date(dataset.year, dataset.month, dataset.day),
+            range = this.data.range
+        if (range.length > 1) range.shift()
+        range.push(date)
+        this.setData({ range })
     },
 
     touchstart: function (event) { // 触摸开始

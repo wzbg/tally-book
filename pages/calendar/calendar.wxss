@@ -82,12 +82,16 @@
   opacity: 0.2;
 }
 
-.calendar-body-selected {
-  background: #eee;
+.calendar-body-range {
+  background: #09bb07;
 }
 
 .calendar-body-today {
   background: #e64340;
+}
+
+.calendar-body-selected {
+  background: #eee;
 }
 
 .calendar-body-sDay {

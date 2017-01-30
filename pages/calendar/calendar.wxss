@@ -1,48 +1,29 @@
 .calendar-root {
-  font-family: simhei;
-  background: #eee;
   height: 100%;
 }
 
 .calendar-navbar {
   display: flex;
-  justify-content: center;
   align-items: center;
-  background: #fff;
   height: 100rpx;
 }
 
 .calendar-navbar-solar-date {
-  flex-grow: 1;
-  width: 200rpx;
   font-size: 40rpx;
 }
 
 .calendar-navbar-lunar-date {
-  flex-grow: 1;
-  width: 200rpx;
   font-size: 25rpx;
 }
 
 .calendar-navbar-button {
   flex-grow: 1;
-  width: 100rpx;
-  height: 50rpx;
-  text-align: center;
-  font-size: 30rpx;
-}
-
-.calendar-navbar-date {
-  flex-grow: 1;
-  width: 150rpx;
-  height: 50rpx;
   text-align: center;
   font-size: 30rpx;
 }
 
 .calendar-head {
   display: flex;
-  background: #fff;
   font-size: 35rpx;
 }
 
@@ -59,22 +40,16 @@
 
 .calendar-body-rows {
   display: flex;
-  align-items: center;
   height: 175rpx;
 }
 
 .calendar-body-cols {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  height: 100%;
   border: 1rpx solid;
+  height: 100%;
+  flex: 1;
 }
 
 .calendar-body-item {
-  display: block;
-  background: #fff;
-  width: 100%;
   height: 100%;
 }
 
@@ -94,40 +69,12 @@
   background: #eee;
 }
 
-.calendar-body-sDay {
+.calendar-body-solar-day {
   text-align: center;
   padding-top: 10rpx;
 }
 
-.calendar-body-lunarDay {
+.calendar-body-lunar-day {
   text-align: center;
-  font-size: 25rpx;
-}
-
-.calendar-detail {
-  background: #fff;
-}
-
-.calendar-detail-day {
-  display: inline;
-  position: absolute;
-  margin-left: 80rpx;
-  font-size: 100rpx;
-  font-weight: bold;
-  color: red;
-}
-
-.calendar-detail-info1 {
-  margin-left: 210rpx;
-  padding-top: 10rpx;
-  padding-bottom: 10rpx;
-  font-size: 30rpx;
-  font-weight: bold;
-}
-
-.calendar-detail-info2 {
-  margin-left: 210rpx;
-  padding-top: 10rpx;
-  padding-bottom: 10rpx;
   font-size: 25rpx;
 }

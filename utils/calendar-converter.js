@@ -164,6 +164,9 @@ const lunarInfo = [
     0x0ada0 // 2049
 ]
 
+const minYear = 1900
+const maxYear = minYear + lunarInfo.length
+
 const Gan = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] // 天干
 const Zhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'] // 地支
 const Animals = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'] // 生肖
@@ -255,24 +258,24 @@ const lFtv = [
 //====================================== 返回农历 y年的总天数
 function lYearDays(y) {
     let sum = 348
-    for (let i = 0x8000; i > 0x8; i >>= 1) sum += (lunarInfo[y - 1900] & i) ? 1 : 0
+    for (let i = 0x8000; i > 0x8; i >>= 1) sum += (lunarInfo[y - minYear] & i) ? 1 : 0
     return sum + leapDays(y)
 }
 
 //====================================== 返回农历 y年的闰月的天数
 function leapDays(y) {
-    if (leapMonth(y)) return (lunarInfo[y - 1900] & 0x10000) ? 30 : 29
+    if (leapMonth(y)) return (lunarInfo[y - minYear] & 0x10000) ? 30 : 29
     else return 0
 }
 
 //====================================== 返回农历 y年闰哪个月 1-12，没闰返回 0
 function leapMonth(y) {
-    return lunarInfo[y - 1900] & 0xf
+    return lunarInfo[y - minYear] & 0xf
 }
 
 //====================================== 返回农历 y年m月的总天数
 function monthDays(y, m) {
-    return (lunarInfo[y - 1900] & (0x10000 >> m)) ? 30 : 29
+    return (lunarInfo[y - minYear] & (0x10000 >> m)) ? 30 : 29
 }
 
 //====================================== 算出农历，传入日期对象，返回农历日期日期对象
@@ -280,14 +283,14 @@ function monthDays(y, m) {
 function Lunar(date) {
     const objDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
     let i, leap = 0, temp = 0
-    const baseDate = new Date(1900, 0, 31)
+    const baseDate = new Date(minYear, 0, 31)
     // Mac和linux平台的firefox在此处会产生浮点数错误
     let offset = Math.round((objDate - baseDate) / 86400000)
 
     this.dayCyl = offset + 40
     this.monCyl = 14
 
-    for (i = 1900; i < 2050 && offset > 0; i++) {
+    for (i = minYear; i < maxYear && offset > 0; i++) {
         temp = lYearDays(i)
         offset -= temp
         this.monCyl += 12
@@ -355,7 +358,7 @@ function Solar(date, isLeapMonth) {
         leap = isLeap(lyear)
 
     // increment year
-    for (let i = 1900; i < lyear; i++) {
+    for (let i = minYear; i < lyear; i++) {
         offset += lYearDays(i)
     }
 
@@ -376,7 +379,7 @@ function Solar(date, isLeapMonth) {
     // increment
     offset += parseInt(lday) - 1
 
-    const baseDate = new Date(1900, 0, 31)
+    const baseDate = new Date(minYear, 0, 31)
     const solarDate = new Date(baseDate.valueOf() + offset * 86400000)
 
     this.year = solarDate.getFullYear()
@@ -390,7 +393,7 @@ function isLeap(year) {
 }
 
 function getAnimalYear(year) {
-    return Animals[(year - 1900) % 12]
+    return Animals[(year - minYear) % 12]
 }
 
 //============================== 传入 offset 返回干支, 0=甲子
@@ -457,7 +460,7 @@ const solarTermOS = '21112211212211212122221122112212222221222222222122212222223
 // 形式如function sTerm(year, n)，用来计算某年的第n个节气（从0小寒算起）为几号，这也基本被认可为节气计算的基本形式。由于每个月份有两个节气，计算时需要调用两次（n和n+1）
 //===== 某年的第n个节气为几日（从0小寒起算）
 function sTerm(y, n) {
-    return solarTermBase[n] + Math.floor(solarTermOS.charAt((Math.floor(solarTermIdx.charCodeAt(y - 1900)) - 48) * 24 + n))
+    return solarTermBase[n] + Math.floor(solarTermOS.charAt((Math.floor(solarTermIdx.charCodeAt(y - minYear)) - 48) * 24 + n))
 }
 
 /////////////////////////////////////////////////////////////////
@@ -534,20 +537,20 @@ function addFstv(sYear, sMonth, sDay, weekDay, lunarYear, lunarMonth, lunarDay, 
     let cYear, cMonth, cDay, that = {}
     ////////年柱 1900年立春后为庚子年(60进制36)
     if (sMonth < 2) {
-        cYear = cyclical(sYear - 1900 + 36 - 1)
+        cYear = cyclical(sYear - minYear + 36 - 1)
     } else {
-        cYear = cyclical(sYear - 1900 + 36)
+        cYear = cyclical(sYear - minYear + 36)
     }
     const term2 = sTerm(sYear, 2) // 立春日期
 
     ////////月柱 1900年1月小寒以前为 丙子月(60进制12)
     const firstNode = sTerm(sYear, sMonth * 2) // 返回当月「节」为几日开始
-    cMonth = cyclical((sYear - 1900) * 12 + sMonth + 12)
+    cMonth = cyclical((sYear - minYear) * 12 + sMonth + 12)
 
     // 依节气调整二月分的年柱, 以立春为界
-    if (sMonth == 1 && sDay >= term2) cYear = cyclical(sYear - 1900 + 36)
+    if (sMonth == 1 && sDay >= term2) cYear = cyclical(sYear - minYear + 36)
     // 依节气月柱, 以「节」为界
-    if (sDay >= firstNode) cMonth = cyclical((sYear - 1900) * 12 + sMonth + 13)
+    if (sDay >= firstNode) cMonth = cyclical((sYear - minYear) * 12 + sMonth + 13)
     // 当月一日与 1900/1/1 相差天数
     // 1900/1/1与 1970/1/1 相差25567日, 1900/1/1 日柱为甲戌日(60进制10)
     const dayCyclical = Date.UTC(sYear, sMonth, 1, 0, 0, 0, 0) / 86400000 + 25567 + 10

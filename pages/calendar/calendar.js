@@ -67,6 +67,7 @@ Page({
                 sDay: startDate.getDate(), // 公历天
                 sMonth: startDate.getMonth(), // 公历月
                 sYear: startDate.getFullYear(), // 公历年
+                lDay: result.lDay, // 农历天（数字）
                 lunarDay: result.lunarDay, // 农历天
                 solarTerms: result.solarTerms, // 节气
                 solarFestival: result.solarFestival, // 公历节日

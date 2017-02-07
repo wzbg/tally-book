@@ -70,8 +70,8 @@ Page({
                 lDay: result.lDay, // 农历天（数字）
                 lunarDay: result.lunarDay, // 农历天
                 solarTerms: result.solarTerms, // 节气
-                solarFestival: result.solarFestival, // 公历节日
-                lunarFestival: result.lunarFestival, // 农历节日
+                solarFestival: result.solarFestival.split(' '), // 公历节日
+                lunarFestival: result.lunarFestival.split(' '), // 农历节日
                 isMonth: month === startDate.getMonth(), // 当月
                 isRange: ranges[0] <= time && time <= ranges[1], // 选中范围
                 isToday: today.getTime() === time, // 今天

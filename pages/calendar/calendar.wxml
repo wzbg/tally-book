@@ -21,6 +21,15 @@
           <view class="calendar-body-lunar-day {{days[row*7+col].lDay===1?'calendar-body-lunar-month':''}}">
             {{days[row*7+col].lunarDay}}
           </view>
+          <view class="calendar-body-solar-terms">
+            {{days[row*7+col].solarTerms}}
+          </view>
+          <view class="calendar-body-solar-festival" wx:for="{{days[row*7+col].solarFestival}}" wx:key="*this">
+            {{item}}
+          </view>
+          <view class="calendar-body-lunar-festival" wx:for="{{days[row*7+col].lunarFestival}}" wx:key="*this">
+            {{item}}
+          </view>
         </view>
       </view>
     </view>

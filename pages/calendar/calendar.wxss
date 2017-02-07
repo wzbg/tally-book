@@ -82,3 +82,27 @@
 .calendar-body-lunar-month {
   color: #ffa500;
 }
+
+.calendar-body-solar-terms {
+  text-align: center;
+  font-size: 25rpx;
+  background: #f00;
+  margin: 2rpx 0;
+  color: #fff;
+}
+
+.calendar-body-solar-festival {
+  text-align: center;
+  font-size: 25rpx;
+  background: #00f;
+  margin: 2rpx 0;
+  color: #fff;
+}
+
+.calendar-body-lunar-festival {
+  text-align: center;
+  font-size: 25rpx;
+  background: #f0f;
+  margin: 2rpx 0;
+  color: #fff;
+}

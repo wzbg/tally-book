@@ -87,7 +87,7 @@
   text-align: center;
   font-size: 25rpx;
   background: #f00;
-  margin: 2rpx 0;
+  margin: 2rpx;
   color: #fff;
 }
 
@@ -95,7 +95,7 @@
   text-align: center;
   font-size: 25rpx;
   background: #00f;
-  margin: 2rpx 0;
+  margin: 2rpx;
   color: #fff;
 }
 
@@ -103,6 +103,6 @@
   text-align: center;
   font-size: 25rpx;
   background: #f0f;
-  margin: 2rpx 0;
+  margin: 2rpx;
   color: #fff;
 }
